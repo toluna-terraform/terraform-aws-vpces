@@ -116,5 +116,11 @@ resource "aws_vpc_endpoint" "logs" {
 resource "aws_vpc_endpoint" "s3" {
   vpc_id       = var.aws_vpc_id
   service_name = "com.amazonaws.${data.aws_region.current.name}.s3"
-  count        = (var.create_s3_vpce ? 1 : 0)
+  vpc_endpoint_type = "Interface"
+  subnet_ids = var.private_subnets_ids
+  security_group_ids = [
+    aws_security_group.vpce_sg.id,
+  ]
+  private_dns_enabled = true
+  count               = (var.create_logs_vpce ? 1 : 0)
 }
