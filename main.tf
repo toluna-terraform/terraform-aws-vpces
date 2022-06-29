@@ -112,12 +112,46 @@ resource "aws_vpc_endpoint" "logs" {
   count               = (var.create_logs_vpce ? 1 : 0)
 }
 
+// VPCE for SSM
+resource "aws_vpc_endpoint" "ssm" {
+  count               = (var.create_ssm_vpce ? 1 : 0)
+
+  vpc_id            = var.aws_vpc_id
+  service_name      = "com.amazonaws.${data.aws_region.current.name}.ssm"
+  vpc_endpoint_type = "Interface"
+  subnet_ids = var.private_subnets_ids
+  security_group_ids = [
+    aws_security_group.vpce_sg.id,
+  ]
+
+  private_dns_enabled = true
+  
+}
+
+// VPCE for monitoring(metrics)
+resource "aws_vpc_endpoint" "monitoring" {
+  count               = (var.create_monitoring_vpce ? 1 : 0)
+
+  vpc_id            = var.aws_vpc_id
+  service_name      = "com.amazonaws.${data.aws_region.current.name}.monitoring"
+  vpc_endpoint_type = "Interface"
+  subnet_ids = var.private_subnets_ids
+  security_group_ids = [
+    aws_security_group.vpce_sg.id,
+  ]
+
+  private_dns_enabled = true
+  
+}
+
 // VPCE for S3
 resource "aws_vpc_endpoint" "s3" {
+  count        = (var.create_s3_vpce ? 1 : 0)
+
   vpc_id       = var.aws_vpc_id
   service_name = "com.amazonaws.${data.aws_region.current.name}.s3"
   vpc_endpoint_type = "Gateway"
-  route_table_ids = [data.aws_route_table.route_table_1.id,data.aws_route_table.route_table_2.id]
-  private_dns_enabled = true
-  count        = (var.create_s3_vpce ? 1 : 0)
+  route_table_ids = data.aws_route_tables.private_rts.ids
+  private_dns_enabled = false
 }
+
