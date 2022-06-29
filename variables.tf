@@ -10,16 +10,22 @@ variable "private_subnets_ids" {
   
 }
 
-variable "region" {
-  
-}
-
 variable "create_ecs_vpce" {
     type = bool
     default = false
 }
 
 variable "create_ecr_vpce" {
+    type = bool
+    default = false
+}
+
+variable "create_ssm_vpce" {
+    type = bool
+    default = false
+}
+
+variable "create_monitoring_vpce" {
     type = bool
     default = false
 }
@@ -33,4 +39,3 @@ variable "create_logs_vpce" {
     type = bool
     default = false
 }
-
